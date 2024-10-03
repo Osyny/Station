@@ -1,0 +1,6 @@
+@Cavell.Web_HostAddress = http://localhost:5182
+
+GET {{Cavell.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
