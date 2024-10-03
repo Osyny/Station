@@ -14,6 +14,9 @@ namespace Station.Core.Entities
         public int OwnerId { get; set; }
         public Owner Owner { get; set; }
 
-        public bool Status { get; set; }
+
+        public List<StationEvent> StationEvents { get; set; }
+
+        // public bool Status { get; set; }
     }
 }

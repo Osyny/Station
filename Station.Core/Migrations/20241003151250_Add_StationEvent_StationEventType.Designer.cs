@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Station.Core;
 
@@ -11,9 +12,11 @@ using Station.Core;
 namespace Station.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003151250_Add_StationEvent_StationEventType")]
+    partial class Add_StationEvent_StationEventType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,9 +78,6 @@ namespace Station.Core.Migrations
                     b.Property<int>("NewData")
                         .HasColumnType("int");
 
-                    b.Property<int>("StationStatusId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("TimeStampe")
                         .HasColumnType("datetime(6)");
 
@@ -87,8 +87,6 @@ namespace Station.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChargeStationId");
-
-                    b.HasIndex("StationStatusId");
 
                     b.HasIndex("TypeId");
 
@@ -114,27 +112,6 @@ namespace Station.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StationEventTypes");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.StationStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EnumValue")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("StationStatuses");
                 });
 
             modelBuilder.Entity("Station.Core.Entities.User", b =>
@@ -197,12 +174,6 @@ namespace Station.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Station.Core.Entities.StationStatus", "StationStatus")
-                        .WithMany()
-                        .HasForeignKey("StationStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Station.Core.Entities.StationEventType", "EventType")
                         .WithMany()
                         .HasForeignKey("TypeId")
@@ -212,8 +183,6 @@ namespace Station.Core.Migrations
                     b.Navigation("ChargeStation");
 
                     b.Navigation("EventType");
-
-                    b.Navigation("StationStatus");
                 });
 
             modelBuilder.Entity("Station.Core.Entities.ChargeStation", b =>
