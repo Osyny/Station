@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Station.Core;
 
@@ -11,9 +12,11 @@ using Station.Core;
 namespace Station.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003172320_Add_Sessions_SessionEvents_SessionEventTypes_SessionStatus")]
+    partial class Add_Sessions_SessionEvents_SessionEventTypes_SessionStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,131 +49,6 @@ namespace Station.Core.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("ChargeStations");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.Connector", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ConectorStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ConectorTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("varchar(1024)");
-
-                    b.Property<int?>("MaxCurrent")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConectorStatusId");
-
-                    b.HasIndex("ConectorTypeId");
-
-                    b.ToTable("Connectors");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.ConnectorEvent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("NewConnectorStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("NewData")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NewConnectorStatusId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("ConnectorEvents");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.ConnectorEventType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EnumValue")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConnectorEventTypes");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.ConnectorStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EnumValue")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConnectorStatuses");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.ConnectorType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConnectorTypes");
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Owner", b =>
@@ -433,42 +311,6 @@ namespace Station.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.Connector", b =>
-                {
-                    b.HasOne("Station.Core.Entities.ConnectorStatus", "ConectorStatus")
-                        .WithMany()
-                        .HasForeignKey("ConectorStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Station.Core.Entities.ConnectorType", "ConectorType")
-                        .WithMany()
-                        .HasForeignKey("ConectorTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ConectorStatus");
-
-                    b.Navigation("ConectorType");
-                });
-
-            modelBuilder.Entity("Station.Core.Entities.ConnectorEvent", b =>
-                {
-                    b.HasOne("Station.Core.Entities.ConnectorStatus", "ConnectorStatus")
-                        .WithMany()
-                        .HasForeignKey("NewConnectorStatusId");
-
-                    b.HasOne("Station.Core.Entities.ConnectorEventType", "EventType")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ConnectorStatus");
-
-                    b.Navigation("EventType");
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Session", b =>

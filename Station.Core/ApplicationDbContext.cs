@@ -16,6 +16,20 @@ namespace Station.Core
         public DbSet<StationEvent> StationEvents { get; set; }
         public DbSet<StationEventType> StationEventTypes { get; set; }
         public DbSet<StationStatus> StationStatuses { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+        public DbSet<SessionEvent> SessionEvents { get; set; }
+        public DbSet<SessionEventType> SessionEventTypes { get; set; }
+        public DbSet<SessionStatus> SessionStatuses { get; set; }
+
+
+        public DbSet<Connector> Connectors { get; set; }
+        public DbSet<ConnectorEvent> ConnectorEvents { get; set; }
+        public DbSet<ConnectorEventType> ConnectorEventTypes { get; set; }
+        public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
+        public DbSet<ConnectorType> ConnectorTypes { get; set; }
+
+
+
 
     }
 }
