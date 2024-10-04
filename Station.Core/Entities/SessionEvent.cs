@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySqlX.XDevAPI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,22 +8,17 @@ using System.Threading.Tasks;
 
 namespace Station.Core.Entities
 {
-    public class StationEvent : BaseEntity
+    public class SessionEvent :BaseEntity
     {
         [ForeignKey(nameof(EventType))]
         public int TypeId { get; set; }
-        public StationEventType EventType { get; set; } 
+        public SessionEventType EventType { get; set; }
 
-        [ForeignKey(nameof(StationStatus))]
+        [ForeignKey(nameof(SessionStatus))]
         public int? StationStatusId { get; set; }
-        public StationStatus StationStatus { get; set; }
+        public SessionStatus SessionStatus { get; set; }
 
         public DateTime TimeStampe { get; set; }
         public int? NewData { get; set; }
-
-        [ForeignKey(nameof(ChargeStation))]
-        public int ChargeStationId { get; set; }
-        public ChargeStation ChargeStation { get; set; }
-
     }
 }
