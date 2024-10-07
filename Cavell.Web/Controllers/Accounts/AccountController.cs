@@ -18,7 +18,7 @@ namespace Cavell.Web.Controllers.Accounts
 {
     [ApiController]
     [Route("[controller]")]
-    //[Authorize]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -42,51 +42,6 @@ namespace Cavell.Web.Controllers.Accounts
             _configuration = configuration;
         }
 
-        [AllowAnonymous]
-        [HttpGet("getUserTokenAuth")]
-        public async Task<AccountResponse> GetUserTokenAuth([FromQuery] LoginInput input)
-        {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == input.Email);
-            if (user != null)
-            {
-               // var result = _passwordHasher.Veryfy(input.Password, user.HashPasword);
-
-                //if (!result)
-                //{
-                //    throw new Exception("Failed to login!");
-                //}
-                var token = _jwtProvider.GenerateToken(user);
-            //    var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-                //  HttpContext.Response.Cookies.Append("test-cookies", token);
-                var map = _mapper.Map<UserDto>(user);
-                return new AccountResponse() { User = map, Token = token };
-            }
-            throw new Exception("Failed to login!");
-
-        }
-
-        [AllowAnonymous]
-        [HttpGet("loginPost")]
-        public async Task<IActionResult> LoginPost([FromQuery] LoginInput input)
-        {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == input.Email);
-            if (user != null)
-            {
-                var result = _passwordHasher.Veryfy(input.Password, user.HashPasword);
-
-                if (!result)
-                {
-                    throw new Exception("Failed to login!");
-                }
-                var token = _jwtProvider.GenerateToken(user);
-              //  var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-                HttpContext.Response.Cookies.Append("token", token);
-             //   var map = _mapper.Map<UserDto>(user);
-                return Ok(token); //new AccountResponse() { User = map, Token = token };
-            }
-            throw new Exception("Failed to login!");
-
-        }
 
         [AllowAnonymous]
         [HttpGet("login")]
