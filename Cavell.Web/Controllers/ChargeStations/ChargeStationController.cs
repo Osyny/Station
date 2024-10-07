@@ -13,7 +13,7 @@ namespace Station.Web.Controllers.ChargeStations
 {
     [ApiController]
     [Route("[controller]")]
-  //  [Authorize]
+    [Authorize]
     public class ChargeStationController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;

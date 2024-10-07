@@ -26,7 +26,7 @@ namespace Station.Web.Services.JwtProviders
             var token = new JwtSecurityToken(
                 claims: claims,
                 signingCredentials: signingCredentials,
-                expires: DateTime.UtcNow.AddSeconds(12));
+                expires: DateTime.UtcNow.AddHours(6));
 
             var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
             return tokenValue;
