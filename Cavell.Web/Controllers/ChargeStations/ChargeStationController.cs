@@ -38,8 +38,9 @@ namespace Station.Web.Controllers.ChargeStations
             {
                input.FilterText = input.FilterText?.ToLower().Trim();
                 var queryFilter = query
-                    .Where(o => o.SerialNumber.ToLower().Contains(input.FilterText) || 
-                    o.Owner.Name.ToLower().Contains(input.FilterText)).AsNoTracking().AsQueryable();
+                    .Where(st => st.SerialNumber.ToLower().Contains(input.FilterText) ||
+                    st.Owner.Name.ToLower().Contains(input.FilterText) ||
+                     st.Name.ToLower().Contains(input.FilterText)).AsNoTracking().AsQueryable();
 
                 query = queryFilter;
             }
