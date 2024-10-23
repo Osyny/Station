@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Station.Web.Services;
+using Microsoft.AspNetCore.Http.Connections;
+using Station.Web.Controllers.ChargeStations;
 
 namespace Cavell
 {
@@ -22,6 +24,7 @@ namespace Cavell
             // Add services to the container.
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+            builder.Services.AddScoped<IChargeStationsManager, ChargeStationsManager>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -57,7 +60,7 @@ namespace Cavell
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-         //   builder.Services.AddSingleton<TimerControl>();
+            builder.Services.AddSingleton<TimerControl>();
             builder.Services.AddSignalR();
 
 
@@ -107,8 +110,12 @@ namespace Cavell
                 HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
                 Secure = CookieSecurePolicy.Always,
             });
+            app.UseCors(x => x
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
+
             app.UseHttpsRedirection();
-            app.UseCors("Default Policy");
 
             app.UseRouting();
 
@@ -117,6 +124,12 @@ namespace Cavell
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<StationHub>("/stationhub", options =>
+                {
+                    options.Transports =
+                        HttpTransportType.WebSockets |
+                        HttpTransportType.LongPolling;
+                });
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
