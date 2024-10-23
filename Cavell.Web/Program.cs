@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Station.Web.Services;
 
 namespace Cavell
 {
@@ -56,42 +57,10 @@ namespace Cavell
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-            ////Jwt configuration starts here
-            //var jwtIssuer = builder.Configuration.GetSection("Authentication:JwtBearer:Issuer").Get<string>();
-            //var jwtKey = builder.Configuration.GetSection("Authentication:JwtBearer:SecurityKey").Get<string>();
+         //   builder.Services.AddSingleton<TimerControl>();
+            builder.Services.AddSignalR();
 
-            //builder.Services.AddAuthentication(x =>
-            //{
-            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(b =>
-            //{
-            //    b.RequireHttpsMetadata = false;
-            //    b.SaveToken = true;
-            //    b.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-            //        ValidateAudience = false,
-            //        ValidateIssuer = false,
-            //    };
-            //});
 
-            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            // .AddJwtBearer(options =>
-            // {
-            //     options.TokenValidationParameters = new TokenValidationParameters
-            //     {
-            //         ValidateIssuer = true,
-            //         ValidateAudience = true,
-            //         ValidateLifetime = true,
-            //         ValidateIssuerSigningKey = true,
-            //         ValidIssuer = jwtIssuer,
-            //         ValidAudience = jwtIssuer,
-            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-            //     };
-            // });
-            ////  Jwt configuration ends here
 
             // configure JWT Bearer authentication
             var key = configuration["Authentication:JwtBearer:SecurityKey"];
@@ -131,7 +100,6 @@ namespace Cavell
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseHttpsRedirection();
 
             app.UseCookiePolicy(new CookiePolicyOptions
             {
@@ -139,11 +107,8 @@ namespace Cavell
                 HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
                 Secure = CookieSecurePolicy.Always,
             });
-
-            app.UseCors(builder => builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+            app.UseHttpsRedirection();
+            app.UseCors("Default Policy");
 
             app.UseRouting();
 

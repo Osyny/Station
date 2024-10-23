@@ -2,7 +2,7 @@
 
 namespace Station.Web.Dtos
 {
-    public class ChargeStationDto
+    public class ChargeStationDto : EntityDto
     {
         public string SerialNumber { get; set; }
         public string Name { get; set; }
