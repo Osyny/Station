@@ -26,16 +26,18 @@ namespace Station.Web.Controllers.ChargeStations
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IChargeStationsManager _stationsManager;
 
 
         public ChargeStationController(IMapper mapper,
             ApplicationDbContext dbContext,
-              IConfiguration configuration)
+              IConfiguration configuration,
+              IChargeStationsManager stationsManager)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _configuration = configuration;
-
+            _stationsManager = stationsManager;
         }
 
        
@@ -70,6 +72,22 @@ namespace Station.Web.Controllers.ChargeStations
 
 
             return new ChargeStationResponse() { ChargeStations = map, Total = count };
+        }
+
+        [HttpGet("getUpdateStatuses")]
+        public StationResponse GetUpdateStatuses()
+        {
+            var stations = _stationsManager.GetUpdateStatuses();
+
+            return stations;
+        }
+
+        [HttpGet("getUpdateStatusesAsync")]
+        public async Task<StationResponse> GetUpdateStatusesAsync()
+        {
+            var stations = await _stationsManager.GetUpdateStatusesAsync();
+
+            return stations;
         }
 
         private async Task<IList<ChargeStation>> GetSortQuery(DataInput input, IQueryable<ChargeStation> query)
