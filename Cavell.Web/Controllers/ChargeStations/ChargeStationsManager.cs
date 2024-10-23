@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using Station.Core;
 using Station.Core.Entities;
 using Station.Web.Controllers.ChargeStations.Dtos;
 using Station.Web.Dtos;
@@ -10,13 +12,16 @@ namespace Station.Web.Controllers.ChargeStations
     public class ChargeStationsManager : IChargeStationsManager
     {
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
         private string connectionStr = "";
         public ChargeStationsManager(IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper,
+            ApplicationDbContext dbContext)
         {
             _configuration = configuration;
             _mapper = mapper;
+            _dbContext = dbContext;
         }
 
         public StationResponse GetUpdateStatuses()
@@ -36,6 +41,17 @@ namespace Station.Web.Controllers.ChargeStations
             }
 
             var map = _mapper.Map<List<ChargeStationDto>>(stations);
+
+            return new StationResponse() { ChargeStations = map };
+        }
+
+        public async Task<StationResponse> GetUpdateStatusesAsync()
+        {
+
+            var chargeStations = await _dbContext.ChargeStations.AsNoTracking().ToListAsync();
+
+
+            var map = _mapper.Map<List<ChargeStationDto>>(chargeStations);
 
             return new StationResponse() { ChargeStations = map };
         }
