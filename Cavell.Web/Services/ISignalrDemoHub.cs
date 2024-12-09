@@ -6,5 +6,6 @@ namespace Station.Web.Services
     {
         Task DisplayMessage(string message);
         Task GetUpdateStatuses(StationResponse stationResponse);
+        Task GetUpdateStatusesAsync(StationResponse stationResponse);
     }
 }

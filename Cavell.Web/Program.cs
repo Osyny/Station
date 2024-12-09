@@ -51,9 +51,9 @@ namespace Cavell
                     "Default Policy",
                     builder => builder
                     .WithOrigins("http://localhost:4200")
-                        .AllowAnyHeader()
-                        .AllowAnyOrigin()
                         .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
 
 
                 ));
@@ -110,10 +110,7 @@ namespace Cavell
                 HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
                 Secure = CookieSecurePolicy.Always,
             });
-            app.UseCors(x => x
-                            .AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader());
+            app.UseCors("Default Policy");
 
             app.UseHttpsRedirection();
 
