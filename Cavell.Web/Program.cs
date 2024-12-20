@@ -46,14 +46,20 @@ namespace Cavell
                 options.UseMySql(connetionString, ServerVersion.AutoDetect(connetionString));
             });
 
+            var corsOrigins = configuration["App:CorsOrigins"] == null ? "http://localhost:4200" : configuration["App:CorsOrigins"];
             builder.Services.AddCors(
                 options => options.AddPolicy(
                     "Default Policy",
                     builder => builder
-                    .WithOrigins("http://localhost:4200")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials()
+                    .WithOrigins(
+                            // App:CorsOrigins in appsettings.json can contain more than one address separated by comma.
+                            corsOrigins?
+                                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                                .ToArray()
+                        )
+                       .AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowCredentials()
 
 
                 ));
