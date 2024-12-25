@@ -25,9 +25,9 @@ namespace Station.Web.Services
         {
             while (true)
             {
-                var res = _stationsManager.GetUpdateStatuses();
+                var res = _stationsManager.GetUpdateStatuses().Result;
                 await Clients.Caller.GetUpdateStatuses(res);
-                await Task.Delay(10000);
+                await Task.Delay(1000);
             }
 
         }

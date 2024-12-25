@@ -8,10 +8,14 @@ namespace Station.AutoMapper
     {
         public MappingProfile()
         {
-
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<Owner, OwnerDto>().ReverseMap();
             CreateMap<ChargeStation, ChargeStationDto>().ReverseMap();
+
+            CreateMap<ConnectorUiStatus, ConnectorUiStatusDto>().ReverseMap();
+            CreateMap<ConnectorType, ConnectorTypeDto>().ReverseMap();
+            CreateMap<ConnectorStatus, ConnectorStatusDto>().ReverseMap();
+            CreateMap<Connector, ConnectorDto>().ReverseMap();
            
         }
     }
