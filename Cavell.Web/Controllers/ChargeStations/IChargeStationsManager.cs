@@ -4,7 +4,7 @@ namespace Station.Web.Controllers.ChargeStations
 {
     public interface IChargeStationsManager
     {
-        StationResponse GetUpdateStatuses();
+        Task<StationResponse> GetUpdateStatuses();
 
         Task<StationResponse> GetUpdateStatusesAsync();
     }

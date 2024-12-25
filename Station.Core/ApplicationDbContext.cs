@@ -27,6 +27,7 @@ namespace Station.Core
         public DbSet<ConnectorEventType> ConnectorEventTypes { get; set; }
         public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
         public DbSet<ConnectorType> ConnectorTypes { get; set; }
+        public DbSet<ConnectorUiStatus> ConnectorUiStatuses { get; set; }
 
 
 

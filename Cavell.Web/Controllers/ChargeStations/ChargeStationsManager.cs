@@ -24,25 +24,36 @@ namespace Station.Web.Controllers.ChargeStations
             _dbContext = dbContext;
         }
 
-        public StationResponse GetUpdateStatuses()
+        public async Task<StationResponse> GetUpdateStatuses()
         {
             List<ChargeStation> stations = new List<ChargeStation>();
             ChargeStation station;
 
             var data = GetDetailsFromDb();
+            List<Connector> connectors = await _dbContext.Connectors.AsNoTracking()
+              .Include(c => c.ConnectorUiStatus).ToListAsync();
+
+            List<int> stationIds = new List<int>();
             foreach (DataRow row in data.Result.Rows)
             {
+          
                 station = new ChargeStation
                 {
                     Id = Convert.ToInt32(row["Id"]),
                     Status = Convert.ToInt32(row["Status"]) == 1 ? true : false,
                 };
+                var stationConectors = connectors.Where(c => c.ChargeStationId == station.Id).ToList();
+                station.Connectors = stationConectors;
+
                 stations.Add(station);
             }
 
-            var map = _mapper.Map<List<ChargeStationDto>>(stations);
+          
 
-            return new StationResponse() { ChargeStations = map };
+            var map = _mapper.Map<List<ChargeStationDto>>(stations);
+            var map_connectors = _mapper.Map<List<ConnectorDto>>(connectors);
+
+            return new StationResponse() { ChargeStations = map, Connectors = map_connectors };
         }
 
         public async Task<StationResponse> GetUpdateStatusesAsync()

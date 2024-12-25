@@ -10,5 +10,7 @@ namespace Station.Web.Dtos
         public OwnerDto Owner { get; set; }
 
         public bool Status { get; set; }
+
+        public List<ConnectorDto> Connectors { get; set; }
     }
 }

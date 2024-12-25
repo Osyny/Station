@@ -21,5 +21,14 @@ namespace Station.Core.Entities
 
         [MaxLength(1024)]
         public string Details { get; set; }
+
+
+        [ForeignKey(nameof(ChargeStation))]
+        public int ChargeStationId { get; set; }
+        public ChargeStation ChargeStation { get; set; }
+
+        [ForeignKey(nameof(ConnectorUiStatus))]
+        public int ConnectorUiStatusId { get; set; }
+        public ConnectorUiStatus ConnectorUiStatus { get; set; }
     }
 }

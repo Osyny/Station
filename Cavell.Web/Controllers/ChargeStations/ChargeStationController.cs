@@ -45,7 +45,10 @@ namespace Station.Web.Controllers.ChargeStations
         [HttpGet("getAll")]
         public async Task<ChargeStationResponse> GetAll([FromQuery] DataInput input)
         {
-            IQueryable<ChargeStation> query = _dbContext.ChargeStations.Include(s => s.Owner);
+            IQueryable<ChargeStation> query = _dbContext.ChargeStations
+                .Include(s => s.Owner)
+                .Include(s => s.Connectors)
+                    .ThenInclude(c => c.ConnectorUiStatus);
 
 
             if (!string.IsNullOrWhiteSpace(input.FilterText))
@@ -68,19 +71,28 @@ namespace Station.Web.Controllers.ChargeStations
 
 
             IList<ChargeStation> sortQuery = await GetSortQuery(input, query);
+ 
             var map = _mapper.Map<List<ChargeStationDto>>(sortQuery);
 
+            foreach (var station in map)
+            {
+                foreach (var connector in station.Connectors)
+                {
+                    connector.ChargeStation = null;
+                }
+
+            }
 
             return new ChargeStationResponse() { ChargeStations = map, Total = count };
         }
 
-        [HttpGet("getUpdateStatuses")]
-        public StationResponse GetUpdateStatuses()
-        {
-            var stations = _stationsManager.GetUpdateStatuses();
+        //[HttpGet("getUpdateStatuses")]
+        //public StationResponse GetUpdateStatuses()
+        //{
+        //    var stations = _stationsManager.GetUpdateStatuses();
 
-            return stations;
-        }
+        //    return stations;
+        //}
 
         [HttpGet("getUpdateStatusesAsync")]
         public async Task<StationResponse> GetUpdateStatusesAsync()
