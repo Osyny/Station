@@ -1,6 +1,10 @@
 ﻿
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Station.Core;
 using Station.Core.Entities;
+using Station.Core.Entities.Identities;
+using Station.Web.Controllers.RolePermitions.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -10,14 +14,30 @@ namespace Station.Web.Services.JwtProviders
     public class JwtProvider : IJwtProvider
     {
         private readonly IConfiguration _configuration;
-        public JwtProvider(IConfiguration configuration)
+
+   
+        public JwtProvider(IConfiguration configuration
+)
         {
             _configuration = configuration;
+
         }
-        public string GenerateToken(User user)
+        public string GenerateTokenAsync(User user, PermissionsClaim permissionsClaim, Role userRole)
         {
-            Claim[] claims = [new("userName", user.UserName.ToString()),
-            new("userRole", user.Role.ToString())];
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("Id", user.Id.ToString()),
+                new Claim("Email", user.Email),
+                new Claim("UserName", user.UserName),
+                new Claim("Role", userRole.Name)
+            };
+
+            string permissionsJson = JsonConvert.SerializeObject(permissionsClaim);
+
+            //Adding permissions to the claims
+            claims.Add(new Claim("Permissions", permissionsJson));
 
             var key = _configuration["Authentication:JwtBearer:SecurityKey"];
             var encodingKey = Encoding.UTF8.GetBytes(key);

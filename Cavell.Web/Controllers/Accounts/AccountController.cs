@@ -13,6 +13,9 @@ using Station.Web.Services.JwtProviders;
 using Station.Web.Services.PasswordHashers;
 using Station.Web.Controllers.Accounts.Dtos;
 using System.IdentityModel.Tokens.Jwt;
+using Station.Core.Entities.Identities;
+using Station.Web.Controllers.RolePermitions.Helpers.Interfaces;
+using Station.Web.Controllers.RolePermitions.Helpers;
 
 namespace Cavell.Web.Controllers.Accounts
 {
@@ -27,19 +30,25 @@ namespace Cavell.Web.Controllers.Accounts
         private readonly IPasswordHasher _passwordHasher;
 
         private readonly IConfiguration _configuration;
+        private readonly IManegerRolePermissions _manegerRolePermissions;
+        private readonly IHelperPermissions _helperPermissions;
 
         public AccountController(
             ApplicationDbContext dbContext,
             IJwtProvider jwtProvider,
             IPasswordHasher passwordHasher,
             IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper,
+            IManegerRolePermissions manegerRolePermissions,
+            IHelperPermissions helperPermissions)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _jwtProvider = jwtProvider;
             _passwordHasher = passwordHasher;
             _configuration = configuration;
+            _manegerRolePermissions = manegerRolePermissions;
+            _helperPermissions = helperPermissions;
         }
 
 
@@ -47,7 +56,11 @@ namespace Cavell.Web.Controllers.Accounts
         [HttpGet("login")]
         public async Task<ActionResult<AccountResponse>> Login([FromQuery] LoginInput input)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == input.Email);
+            var user = await _dbContext.Users
+                .AsNoTracking()
+                .Include(u => u.UserRoles)                  
+                .FirstOrDefaultAsync(user => user.Email == input.Email);
+
             if (user != null)
             {
                 var result = _passwordHasher.Veryfy(input.Password, user.HashPasword);
@@ -56,12 +69,23 @@ namespace Cavell.Web.Controllers.Accounts
                 {
                     return new AccountResponse();
                 }
-                var token = _jwtProvider.GenerateToken(user);
-                // var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
+                var ur = await _dbContext.UserRoles
+                    .AsNoTracking()
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.UserId == user.Id);
+                var permissionsClaim =
+                    await _helperPermissions.GetPermissionClaimsByUserAsync(user.Id);
+
+                var token = _jwtProvider.GenerateTokenAsync(user, permissionsClaim, ur.Role);
+ 
                 HttpContext.Response.Cookies.Append("token", token);
+
+                foreach (var userRole in user.UserRoles) {
+                    userRole.User = null;
+                }
                 var map = _mapper.Map<UserDto>(user);
-               // Ok(token);
-                return  Ok(new AccountResponse() { User = map, Token = token }); //new AccountResponse() { User = map, Token = token };
+   
+                return  Ok(new AccountResponse() { User = map, Token = token });
             }
            return new AccountResponse();
 
@@ -78,34 +102,38 @@ namespace Cavell.Web.Controllers.Accounts
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromForm] RegisterInput input)
+        public async Task<OutputDataResponse> Register([FromForm] RegisterInput input)
         {
+            var error = "";
             var hashPasword = _passwordHasher.GetHashadPasword(input.Password);
-            User user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == input.Email);
+            User user = await _dbContext.Users?.FirstOrDefaultAsync(user => user.Email == input.Email);
             if (user != null)
             {
-                ModelState.AddModelError("message", "User alredy exist!!!.");
-
-                return BadRequest(ModelState);
+                error = "User already exist!";
+                return new OutputDataResponse() { Error = error };
             }
+
+             Role role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == (int)input.Role);
+
             user = new User
             {
                 UserName = input.UserName,
                 Email = input.Email,
                 FirstName = input.FirstName,
                 LastName = input.LastName,
-                Role = input.Role,
+                UserRoles = new List<UserRole>(),
                 HashPasword = hashPasword,
             };
 
-            var result = await _dbContext.AddAsync(user);
+            var result = await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
 
+            await _manegerRolePermissions.CreatedUserRole(new Station.Web.Controllers.Users.Dtos.UserRoleInput() { RoleId = role.Id, UserId = result.Entity.Id });
 
-            return Ok(new { userID = user.Id });
+            return new OutputDataResponse() { UserId = result.Entity.Id };
 
         }
 
-
+        
     }
 }

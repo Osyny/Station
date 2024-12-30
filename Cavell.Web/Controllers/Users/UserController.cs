@@ -11,6 +11,9 @@ using System.Data;
 using Station.Core.Helpers.SelectList;
 using Microsoft.AspNetCore.Authorization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Station.Core.Entities.Identities;
+using System.Runtime.InteropServices;
+using Station.Web.Controllers.RolePermitions.Helpers.Interfaces;
 
 namespace Station.Web.Controllers.Users
 {
@@ -21,9 +24,13 @@ namespace Station.Web.Controllers.Users
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IManegerRolePermissions _manegerRolePermissions;
 
 
-        public UserController( IMapper mapper, ApplicationDbContext dbContext)
+
+        public UserController( IMapper mapper,
+            ApplicationDbContext dbContext,
+            IManegerRolePermissions manegerRolePermissions)
         {
             _mapper = mapper;
             _dbContext = dbContext;
@@ -57,10 +64,36 @@ namespace Station.Web.Controllers.Users
                 var mapUser = MapUserEntityDto(user);
                 mapUsers.Add(mapUser);
             }
-            //var map = _mapper.Map<List<UserDto>>(sortQuery);
-
 
             return new UsersResponse() { Users = mapUsers, Total = count };
+        }
+
+        [HttpPost("assign-user-role")]
+        public async Task<UserRole> AssignUserRoleAsync([FromForm]UserRoleInput input)
+        {
+          //  User newUser = await _dbContext.Users?.FirstOrDefaultAsync(user => user.Id == input.UserId);
+           var res = await _manegerRolePermissions.CreatedUserRole(input);
+            return res;
+        }
+
+        [HttpPost("un-assign-user-role")]
+        public async Task UnAssignUserRoleAsync(int roleId, int userId)
+        {
+
+            var find =await _dbContext.UserRoles.FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId);
+            if(find != null)
+            {
+                _dbContext.UserRoles.Remove(find);
+                await _dbContext.SaveChangesAsync();
+            }
+           
+        }
+
+        private async Task<bool> IsUserRoleExist(int roleId, int userId)
+        {
+            bool IsRolePermissionExist = await _dbContext.UserRoles.AnyAsync(u => u.UserId == userId && u.UserId == userId);
+
+            return IsRolePermissionExist;
         }
 
         [HttpGet("getRoles")]
@@ -110,7 +143,7 @@ namespace Station.Web.Controllers.Users
         private UserDto MapUserEntityDto(User user)
         {
             var map = _mapper.Map<UserDto>(user);
-            map.RoleName = user.Role.GetDisplayValue();
+            map.RoleName = string.Join(",", user.UserRoles.Select(r => r.Role.Name));
             return map;
         }
     }

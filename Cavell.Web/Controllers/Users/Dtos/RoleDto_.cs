@@ -1,6 +1,8 @@
-﻿namespace Station.Web.Controllers.Users.Dtos
+﻿using Station.Web.Dtos;
+
+namespace Station.Web.Controllers.Users.Dtos
 {
-    public class RoleDto
+    public class RoleDto_ : EntityDto
     {
         public long Id { get; set; }    
         public string Name { get; set; }    
