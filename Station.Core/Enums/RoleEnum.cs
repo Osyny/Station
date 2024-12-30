@@ -10,8 +10,8 @@ namespace Station.Core.Enums
     public enum RoleEnum
     {
         [Display(Name = "Admin")]
-        Admin,
+        Admin = 1,
         [Display(Name = "User")]
-        User,
+        User = 2,
     }
 }

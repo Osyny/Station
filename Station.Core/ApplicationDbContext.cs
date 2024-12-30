@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Station.Core.Entities;
+using Station.Core.Entities.Identities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,13 @@ namespace Station.Core
         public DbSet<ConnectorStatus> ConnectorStatuses { get; set; }
         public DbSet<ConnectorType> ConnectorTypes { get; set; }
         public DbSet<ConnectorUiStatus> ConnectorUiStatuses { get; set; }
+
+        //RolePermission
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<PermissionAction> PermissionActions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<PermissionCategory> PermissionCategories { get; set; }
 
 
 

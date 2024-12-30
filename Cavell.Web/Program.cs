@@ -11,6 +11,8 @@ using System.Text;
 using Station.Web.Services;
 using Microsoft.AspNetCore.Http.Connections;
 using Station.Web.Controllers.ChargeStations;
+using Station.Web.Controllers.RolePermitions.Helpers;
+using Station.Web.Controllers.RolePermitions.Helpers.Interfaces;
 
 namespace Cavell
 {
@@ -25,6 +27,8 @@ namespace Cavell
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
             builder.Services.AddScoped<IChargeStationsManager, ChargeStationsManager>();
+            builder.Services.AddScoped<IManegerRolePermissions, ManegerRolePermissions>();
+            builder.Services.AddScoped<IHelperPermissions, HelperPermissions>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

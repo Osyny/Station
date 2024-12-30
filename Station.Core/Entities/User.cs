@@ -1,4 +1,5 @@
-﻿using Station.Core.Enums;
+﻿using Station.Core.Entities.Identities;
+using Station.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,6 +20,8 @@ namespace Station.Core.Entities
         public string Email { get; set; }
         [Required]
         public string HashPasword { get; set; }
-        public RoleEnum Role { get; set; }
+
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
     }
 }
