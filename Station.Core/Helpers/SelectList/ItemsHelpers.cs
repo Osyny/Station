@@ -18,5 +18,17 @@ namespace Station.Core.Helpers.SelectList
             return rolesSelectList.Select(a => a.ToSelectListItem()).OrderByDescending(i => i.Name).ToList();
         }
 
+        public static List<PermissionActionEnum> GetPermissionActionItems()
+        {
+            var rolesSelectList = new List<PermissionActionEnum>
+            {
+                PermissionActionEnum.View,
+                PermissionActionEnum.Create,
+                PermissionActionEnum.Delete,
+                PermissionActionEnum.Edit    
+            };
+            return rolesSelectList;
+        }
+
     }
 }
