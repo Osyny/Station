@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Station.Core;
 
@@ -11,9 +12,11 @@ using Station.Core;
 namespace Station.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250102135306_AddDefaultPermissionActions")]
+    partial class AddDefaultPermissionActions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,14 +431,6 @@ namespace Station.Core.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            RoleId = 1,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Owner", b =>
@@ -691,7 +686,7 @@ namespace Station.Core.Migrations
                             Id = 1,
                             Email = "admin@gmail.com",
                             FirstName = "admin",
-                            HashPasword = "$2a$11$77301yY.t9QyruVZ07C.muTJa71m75Htd6E.tUCjZHGAlWljHrbNe",
+                            HashPasword = "$2a$11$GWIWlYNNTovxeqM1Jp7rHuOPZOgIztq/tMte3qxj.Cr3HWZwXBNhe",
                             IsActive = true,
                             LastName = "admin",
                             UserName = "admin@gmail.com"

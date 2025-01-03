@@ -1,11 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Generators;
 using Station.Core.Entities;
 using Station.Core.Entities.Identities;
+using Station.Core.Enums;
+using Station.Web.Host.Extentions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BCrypt;
+using System.Data;
+using Station.Core.Configurations;
 
 namespace Station.Core
 {
@@ -38,7 +44,42 @@ namespace Station.Core
         public DbSet<PermissionCategory> PermissionCategories { get; set; }
 
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            var hashadPasword = BCrypt.Net.BCrypt.EnhancedHashPassword("123Pa$$word!");
+            builder.Entity<User>().HasData(new User
+            {
+                Id = 1,
+                Email = "admin@gmail.com",
+                UserName = "admin@gmail.com",
+                IsActive = true,
+                FirstName = "admin",
+                LastName = "admin",
+                HashPasword = hashadPasword,
+            });
+
+            IEnumerable<Role> roles = Enum.GetValues<RoleEnum>().Select(r => new Role
+            {
+                Id = (int)r,
+                Name = r.GetDisplayValue(),
+                Description = r.GetDisplayValue(),
+            });
+            builder.Entity<Role>().HasData(roles);
+
+            builder.ApplyConfiguration(new PermissionCategoriesConfiguration());
+            builder.ApplyConfiguration(new PermissionActionsConfiguration());
+            builder.ApplyConfiguration(new UserRoleConfiguration());
 
 
+            //IEnumerable<PermissionCategory> permissionCategories = Enum.GetValues<PermissionCategoryEnum>().Select(r => new PermissionCategory
+            //{
+            //    Id = (int)r,
+            //    Name = r.GetDisplayValue(),
+            //    Description = r.GetDisplayValue(),
+            //});
+
+
+        }
     }
 }

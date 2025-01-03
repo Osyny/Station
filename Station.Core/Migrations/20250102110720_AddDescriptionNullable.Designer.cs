@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Station.Core;
 
@@ -11,9 +12,11 @@ using Station.Core;
 namespace Station.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250102110720_AddDescriptionNullable")]
+    partial class AddDescriptionNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,72 +245,6 @@ namespace Station.Core.Migrations
                     b.HasIndex("PermissionCategoryId");
 
                     b.ToTable("PermissionActions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Edit",
-                            Name = "Edit",
-                            PermissionCategoryId = 1,
-                            Value = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Create",
-                            Name = "Create",
-                            PermissionCategoryId = 1,
-                            Value = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "View",
-                            Name = "View",
-                            PermissionCategoryId = 1,
-                            Value = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Delete",
-                            Name = "Delete",
-                            PermissionCategoryId = 1,
-                            Value = 4
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "Edit",
-                            Name = "Edit",
-                            PermissionCategoryId = 2,
-                            Value = 1
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "Create",
-                            Name = "Create",
-                            PermissionCategoryId = 2,
-                            Value = 2
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "View",
-                            Name = "View",
-                            PermissionCategoryId = 2,
-                            Value = 3
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Description = "Delete",
-                            Name = "Delete",
-                            PermissionCategoryId = 2,
-                            Value = 4
-                        });
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Identities.PermissionCategory", b =>
@@ -332,22 +269,6 @@ namespace Station.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PermissionCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Charge Station",
-                            Name = "Charge Station",
-                            Value = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "User",
-                            Name = "User",
-                            Value = 2
-                        });
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Identities.Role", b =>
@@ -368,20 +289,6 @@ namespace Station.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Admin",
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "User",
-                            Name = "User"
-                        });
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Identities.RolePermission", b =>
@@ -428,14 +335,6 @@ namespace Station.Core.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            RoleId = 1,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("Station.Core.Entities.Owner", b =>
@@ -684,18 +583,6 @@ namespace Station.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "admin@gmail.com",
-                            FirstName = "admin",
-                            HashPasword = "$2a$11$77301yY.t9QyruVZ07C.muTJa71m75Htd6E.tUCjZHGAlWljHrbNe",
-                            IsActive = true,
-                            LastName = "admin",
-                            UserName = "admin@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Station.Core.Entities.ChargeStation", b =>

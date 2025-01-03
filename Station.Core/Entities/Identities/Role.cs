@@ -8,14 +8,11 @@ using System.Threading.Tasks;
 
 namespace Station.Core.Entities.Identities
 {
-    public class Role : BaseEntity// : System.IO.Enumeration
+    public class Role : BaseEntity
     {
-        //public static readonly Role Admin = new Role() { RoleEnum = RoleEnum.Admin };
-        //public static readonly Role User = new Role() { RoleEnum = RoleEnum.User };
-        //  public Role(int id, string name)// : base(id, name) { }
 
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
 
         // Navigation properties
         [JsonIgnore]

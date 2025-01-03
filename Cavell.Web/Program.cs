@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Http.Connections;
 using Station.Web.Controllers.ChargeStations;
 using Station.Web.Controllers.RolePermitions.Helpers;
 using Station.Web.Controllers.RolePermitions.Helpers.Interfaces;
+using Station.Web.Seeds;
+using static Station.Web.Seeds.DefaultRolesPermissions;
+using Microsoft.Extensions.Hosting;
 
 namespace Cavell
 {
@@ -147,6 +150,10 @@ namespace Cavell
                     return Task.CompletedTask;
                 });
             });
+
+            //2.Build an intermediate service provider
+           var sp = builder.Services.BuildServiceProvider();
+           DefaultRolesPermissions.SeedRolePermissions(sp);
 
             app.MapControllers();
 
