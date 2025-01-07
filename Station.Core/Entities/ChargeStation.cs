@@ -14,7 +14,7 @@ namespace Station.Core.Entities
         public string IPAddress { get; set; }
 
         [ForeignKey(nameof(Owner))]
-        public int OwnerId { get; set; }
+        public int? OwnerId { get; set; }
         public Owner Owner { get; set; }
 
         public List<StationEvent> StationEvents { get; set; }
