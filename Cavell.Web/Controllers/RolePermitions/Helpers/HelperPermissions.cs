@@ -54,7 +54,7 @@ namespace Station.Web.Controllers.RolePermitions.Helpers
 
             return new PermissionsClaim()
             {
-                PermissionCategoriesClaims = permissionCategories
+                PermissionCategoryClaims = permissionCategories
             };
         }
     }

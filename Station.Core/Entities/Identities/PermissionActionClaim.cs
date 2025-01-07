@@ -22,6 +22,6 @@ namespace Station.Core.Entities.Identities
 
     public class PermissionsClaim
     {
-        public List<PermissionCategoryClaim> PermissionCategoriesClaims { get; set; }
+        public List<PermissionCategoryClaim> PermissionCategoryClaims { get; set; }
     }
 }
