@@ -7,11 +7,13 @@ using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using Station.Core;
 using Station.Core.Entities;
+using Station.Web.Controllers.Accounts.Dtos;
 using Station.Web.Controllers.ChargeStations.Dtos;
 using Station.Web.Controllers.Users.Dtos;
 using Station.Web.Dtos;
 using Station.Web.Host.Extentions;
 using Station.Web.Services;
+using Station.Web.Services.CurrentUserServices;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -28,16 +30,20 @@ namespace Station.Web.Controllers.ChargeStations
         private readonly IConfiguration _configuration;
         private readonly IChargeStationsManager _stationsManager;
 
+        private readonly ICurrentUserService _currentUserService;
+
 
         public ChargeStationController(IMapper mapper,
             ApplicationDbContext dbContext,
               IConfiguration configuration,
-              IChargeStationsManager stationsManager)
+              IChargeStationsManager stationsManager,
+              ICurrentUserService currentUserService)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _configuration = configuration;
             _stationsManager = stationsManager;
+            _currentUserService = currentUserService;
         }
 
        
@@ -85,14 +91,27 @@ namespace Station.Web.Controllers.ChargeStations
 
             return new ChargeStationResponse() { ChargeStations = map, Total = count };
         }
+        [HttpPost("update-create")]
+        public async Task<OutputCreateResponse> UpdateOrCreate([FromBody] ChargeStationDto stationDto)
+        {
+            var res = new OutputCreateResponse();
+            var curentUserEmail = _currentUserService.Email;
+            var curentUserName = HttpContext.User.Identity.Name;
+            var curentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == curentUserEmail);
 
-        //[HttpGet("getUpdateStatuses")]
-        //public StationResponse GetUpdateStatuses()
-        //{
-        //    var stations = _stationsManager.GetUpdateStatuses();
+            if (stationDto.Id == 0)
+            {
+                res = await Create(stationDto, res, curentUser);
+            }
+            else
+            {                         
+                var stationUpdate = _mapper.Map<ChargeStation>(stationDto);
 
-        //    return stations;
-        //}
+                _dbContext.ChargeStations.Update(stationUpdate);
+                await _dbContext.SaveChangesAsync();
+            }
+            return res;
+        }
 
         [HttpGet("getUpdateStatusesAsync")]
         public async Task<StationResponse> GetUpdateStatusesAsync()
@@ -100,6 +119,22 @@ namespace Station.Web.Controllers.ChargeStations
             var stations = await _stationsManager.GetUpdateStatusesAsync();
 
             return stations;
+        }
+
+        private async Task<OutputCreateResponse> Create(ChargeStationDto stationDto, 
+            OutputCreateResponse response, User curentUser)
+        {
+            var error = "";
+
+            var station = _mapper.Map<ChargeStation>(stationDto);
+            station.OwnerId = null;
+
+            var result = await _dbContext.AddAsync(station);
+            await _dbContext.SaveChangesAsync();
+
+            response.StationId = result.Entity.Id;
+            return response;
+
         }
 
         private async Task<IList<ChargeStation>> GetSortQuery(DataInput input, IQueryable<ChargeStation> query)
