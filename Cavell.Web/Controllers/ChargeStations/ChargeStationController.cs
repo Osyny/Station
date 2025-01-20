@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using Station.Core;
 using Station.Core.Entities;
+using Station.Core.Enums;
 using Station.Web.Controllers.Accounts.Dtos;
 using Station.Web.Controllers.ChargeStations.Dtos;
 using Station.Web.Controllers.Users.Dtos;
@@ -14,6 +16,7 @@ using Station.Web.Dtos;
 using Station.Web.Host.Extentions;
 using Station.Web.Services;
 using Station.Web.Services.CurrentUserServices;
+using Station.Web.Services.PermissionRequirementHandlers;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -46,8 +49,7 @@ namespace Station.Web.Controllers.ChargeStations
             _currentUserService = currentUserService;
         }
 
-       
-
+        [PermissionAttribute(new[] { PermissionActionEnum.View })]
         [HttpGet("getAll")]
         public async Task<ChargeStationResponse> GetAll([FromQuery] DataInput input)
         {
